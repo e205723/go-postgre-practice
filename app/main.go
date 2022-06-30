@@ -27,8 +27,8 @@ func main() {
 
     server := api.Server{Db: db}
 
-    http.HandleFunc("/get-quote", server.HandleGet)
-    http.HandleFunc("/post-quote", server.HandlePost)
+    http.HandleFunc("/get-user", server.HandleGet)
+    http.HandleFunc("/post-user", server.HandlePost)
     log.Fatal(http.ListenAndServe(":8080", nil))
     if err != nil && err != http.ErrServerClosed {
         log.Fatal(err)

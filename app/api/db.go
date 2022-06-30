@@ -9,10 +9,9 @@ import (
     _ "github.com/lib/pq"
 )
 
-type Quote struct {
-    Id     int
-    Quote  string
-    Author string
+type User struct {
+    Name  string
+    Password  string
 }
 
 type Server struct {
@@ -20,7 +19,7 @@ type Server struct {
 }
 
 func (s *Server) HandleGet(w http.ResponseWriter, r *http.Request) {
-    query := "SELECT quote, author FROM quote"
+    query := "SELECT id, name FROM users"
     rows, err := s.Db.Query(query)
     if err != nil {
         log.Println("[ERROR]", err)
@@ -33,25 +32,25 @@ func (s *Server) HandleGet(w http.ResponseWriter, r *http.Request) {
     defer rows.Close()
     for rows.Next() {
         var (
-            quote string
-            author string
+            id int
+            name string
         )
-        if err := rows.Scan(&quote, &author); err != nil {
+        if err := rows.Scan(&id, &name); err != nil {
             log.Fatal(err)
         }
-        log.Printf("Quote: '%s'\n Author: %s\n\n", quote, author)
+        log.Printf("id: '%d'\n user: %s\n\n", id, name)
     }
 }
 
 func (s *Server) HandlePost(w http.ResponseWriter, r *http.Request) {
     if r.Method == http.MethodPost {
-        var quote Quote
+        var user User
         decoder := json.NewDecoder(r.Body)
-        decodeError := decoder.Decode(&quote)
+        decodeError := decoder.Decode(&user)
         if decodeError != nil {
             log.Println("[ERROR]", decodeError)
         }
-        query := fmt.Sprintf("INSERT INTO quote (id, quote, author) VALUES (%d, '%s', '%s')", quote.Id, quote.Quote, quote.Author)
+        query := fmt.Sprintf("INSERT INTO users (name, password) VALUES ('%s', '%s')", user.Name, user.Password)
         _, queryRrror := s.Db.Exec(query)
         if queryRrror != nil {
             log.Println("[ERROR]", queryRrror)
