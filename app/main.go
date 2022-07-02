@@ -29,6 +29,9 @@ func main() {
 
     http.HandleFunc("/get-user", server.HandleGet)
     http.HandleFunc("/post-user", server.HandlePost)
+    http.HandleFunc("/signin", server.Signin)
+    http.HandleFunc("/welcome", server.Welcome)
+    http.HandleFunc("/refresh", server.Refresh)
     log.Fatal(http.ListenAndServe(":8080", nil))
     if err != nil && err != http.ErrServerClosed {
         log.Fatal(err)
